@@ -28,9 +28,11 @@
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "jsx-quotes": ["error", "prefer-single"],
+    "one-var": "off",
+    "no-restricted-syntax": ["off"],
     "no-console": "warn",
-    "linebreak-style": "off",
     "no-nested-ternary": "off",
+    "linebreak-style": "off",
     "react/self-closing-comp": "warn",
     "import/prefer-default-export": "off"
   }
