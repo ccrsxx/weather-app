@@ -27,13 +27,16 @@
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
     "jsx-quotes": ["error", "prefer-single"],
     "one-var": "off",
     "no-restricted-syntax": ["off"],
     "no-console": "warn",
     "no-nested-ternary": "off",
     "linebreak-style": "off",
+    "react/no-array-index-key": "off",
     "react/self-closing-comp": "warn",
+    "react/jsx-props-no-spreading": "off",
     "import/prefer-default-export": "off"
   }
 }

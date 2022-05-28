@@ -1,4 +1,4 @@
-interface PartWeatherData {
+export interface PartCurrentWeather {
   icon: string;
   temp: number;
   precipitation: number;
@@ -9,7 +9,7 @@ interface PartWeatherData {
   description: string;
 }
 
-export interface WeatherData {
-  metric: PartWeatherData;
-  imperial: PartWeatherData;
+export interface CurrentWeather {
+  metric: PartCurrentWeather;
+  imperial: PartCurrentWeather;
 }

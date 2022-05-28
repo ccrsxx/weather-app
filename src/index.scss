@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-0: '';
+  --color-1: '';
+  --color-2: '';
+  --color-3: '';
+}
+
+#root {
+  animation: live-gradient 15s ease infinite;
+  background-image: linear-gradient(
+    -45deg,
+    var(--color-0),
+    var(--color-1),
+    var(--color-2),
+    var(--color-3)
+  );
+  background-size: 400% 400%;
+}
+
+@keyframes live-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
