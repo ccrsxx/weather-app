@@ -1,4 +1,4 @@
-import { PartDailyWeather } from '../types';
+import type { PartDailyWeather } from '../types';
 
 interface DailyForecastProps extends PartDailyWeather {
   index: number;
@@ -20,9 +20,11 @@ export function DailyForecast({
     <button
       type='button'
       className={`${
-        dayIndex === index && 'bg-[#f8f9fa]'
+        dayIndex === index && '!bg-[#f8f9fa]'
       } flex animate-fade cursor-pointer flex-col items-center justify-center 
-        rounded-md border border-white p-3 transition-colors duration-300`}
+        rounded-md border border-white p-3 transition-all duration-300
+        hover:bg-[rgba(255,255,255,0.4)] focus-visible:outline-none
+        focus-visible:ring-2 focus-visible:ring-offset-2`}
       onClick={handleDayIndexChange(index)}
     >
       <p className='text-lg text-[#505153]'>{day}</p>

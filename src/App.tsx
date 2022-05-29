@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Weather, Control, Forecast } from './components';
-import { getWeather, parseWeatherData as parseWeather } from './common';
-import type { CurrentWeather, HourlyWeather, DailyWeather } from './types';
+import { useState, useRef, useEffect } from 'react';
+import { Main, Weather, Control, Forecast, Footer } from './components';
+import {
+  defaultWeather,
+  defaultError,
+  getWeather,
+  sleep,
+  parseWeatherData
+} from './common';
+import type { WeatherData } from './types';
 
 export function App() {
   const [units, setUnits] = useState<'metric' | 'imperial'>('metric');
   const [query, setQuery] = useState<string>('');
   const [dayIndex, setDayIndex] = useState<number>(0);
   const [isFetching, setIsFetching] = useState(false);
-  const [errorStatus, setIsErrorStatus] = useState({
-    errorStatus: false,
-    errorMessage: ''
-  });
+  const [errorStatus, setErrorStatus] = useState(defaultError);
+  const [weatherData, setWeatherData] = useState<WeatherData>(defaultWeather);
   const [forecastMode, setForecastMode] = useState<'hourly' | 'daily'>('daily');
-  const [currentWeather, setCurrentWeather] = useState<null | CurrentWeather>(
-    null
-  );
-  const [hourlyWeather, setHourlyWeather] = useState<null | HourlyWeather>(
-    null
-  );
-  const [dailyWeather, setDailyWeather] = useState<null | DailyWeather>(null);
+
+  const firstRender = useRef(true);
 
   useEffect(() => {
     const randomizeGradient = () => {
@@ -36,61 +35,79 @@ export function App() {
     };
     randomizeGradient();
     handleWeather();
+    firstRender.current = false;
   }, []);
 
-  const handleWeather = async (cityName = 'Tangerang') => {
-    setIsFetching(true);
-
+  const handleWeather = async (cityName = 'Jakarta') => {
     let metricData, imperialData;
+
+    handleFetching();
+
+    if (!firstRender.current) await sleep(500);
 
     try {
       [metricData, imperialData] = await Promise.all(
         ['metric', 'imperial'].map((unit) => getWeather(cityName, unit))
       );
     } catch ({ message }) {
-      const errorMessage = (
-        message === 'Not Found'
-          ? 'Please enter a valid city'
-          : 'Your request is failed'
-      ) as string;
-      setIsFetching(false);
-      setIsErrorStatus({ errorStatus: true, errorMessage });
+      handleError(message as string);
       return;
     }
 
-    const [metricCurrent, metricHourly, metricDaily] = parseWeather(
+    const [metricCurrent, metricHourly, metricDaily] = parseWeatherData(
       metricData,
       'metric'
     );
 
-    const [imperialCurrent, imperialHourly, imperialDaily] = parseWeather(
+    const [imperialCurrent, imperialHourly, imperialDaily] = parseWeatherData(
       imperialData,
       'imperial'
     );
 
-    setCurrentWeather({
-      metric: metricCurrent,
-      imperial: imperialCurrent
+    setWeatherData({
+      current: {
+        metric: metricCurrent,
+        imperial: imperialCurrent
+      },
+      hourly: {
+        metric: metricHourly,
+        imperial: imperialHourly
+      },
+      daily: {
+        metric: metricDaily,
+        imperial: imperialDaily
+      }
     });
 
-    setHourlyWeather({
-      metric: metricHourly,
-      imperial: imperialHourly
-    });
-
-    setDailyWeather({
-      metric: metricDaily,
-      imperial: imperialDaily
-    });
-
-    setIsFetching(false);
-    setIsErrorStatus({ errorStatus: false, errorMessage: '' });
+    handleSuccess();
   };
 
   const clearQuery = () => {
     const input = document.querySelector('input') as HTMLInputElement;
     input.value = '';
     setQuery('');
+  };
+
+  const handleFetching = () => {
+    setErrorStatus(defaultError);
+    setIsFetching(true);
+  };
+
+  const handleError = (message: string) => {
+    const errorMessage = (
+      message === 'Not Found'
+        ? 'Please enter a valid city'
+        : 'Your request is failed'
+    ) as string;
+    setIsFetching(false);
+    setErrorStatus({ errorStatus: true, errorMessage });
+  };
+
+  const handleSuccess = () => {
+    // (document.activeElement as HTMLElement).blur();
+    clearQuery();
+    setIsFetching(false);
+    setErrorStatus(defaultError);
   };
 
   const handleUnitChange = (unitType: 'metric' | 'imperial') => () => {
@@ -115,37 +132,33 @@ export function App() {
     setQuery(value);
   };
 
-  const handleSumbmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (query) handleWeather(query);
   };
 
   const currentForecast = !dayIndex
-    ? currentWeather?.[units]
-    : dailyWeather?.[units][dayIndex];
+    ? weatherData.current[units]
+    : weatherData.daily[units][dayIndex];
 
-  const hourlyForecast = hourlyWeather?.[units];
-  const dailyForecast = dailyWeather?.[units];
+  const hourlyForecast = weatherData.hourly[units];
+  const dailyForecast = weatherData.daily[units];
 
   return (
-    <div className='mx-4 flex min-h-screen items-center justify-center'>
-      <main
-        className={`${
-          isFetching && 'animate-pulse'
-        } flex w-full max-w-3xl flex-col gap-4 rounded-md border-2 
-          bg-[rgba(255,255,255,0.8)] px-8 py-6`}
-      >
+    <>
+      <Main isFetching={isFetching}>
         <Weather
+          {...currentForecast}
           units={units}
           handleUnitChange={handleUnitChange}
-          {...currentForecast}
         />
         <Control
           {...errorStatus}
           query={query}
+          isFetching={isFetching}
           forecastMode={forecastMode}
           clearQuery={clearQuery}
-          handleSubmit={handleSumbmit}
+          handleSubmit={handleSubmit}
           handleQueryChange={handleQueryChange}
           handleForecastModeChange={handleForecastModeChange}
         />
@@ -156,7 +169,8 @@ export function App() {
           dailyForecast={dailyForecast}
           handleDayIndexChange={handleDayIndexChange}
         />
-      </main>
-    </div>
+      </Main>
+      <Footer />
+    </>
   );
 }

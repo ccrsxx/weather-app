@@ -23,7 +23,7 @@ module.exports = {
             transform: 'rotate(240deg)'
           },
           to: {
-            transform: 'rotate(0deg)'
+            transform: 'rotate(360deg)'
           }
         }
       },
