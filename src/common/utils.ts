@@ -10,9 +10,6 @@ export function getTime(
   const day = date.toLocaleDateString('en-gb', {
     weekday: onlyDay && !shortDay ? 'short' : 'long'
   });
-
-  if (onlyDay) return day;
-
   const time = `${date.toLocaleTimeString(
     `en-${units === 'metric' ? 'gb' : 'us'}`,
     {
@@ -24,7 +21,7 @@ export function getTime(
        */
     }
   )}${units === 'metric' ? ':00' : ''}`;
-  return onlyTime ? time : `${day}, ${time}`;
+  return onlyTime ? time : onlyDay ? day : `${day}, ${time}`;
 }
 
 export function sleep(ms: number) {

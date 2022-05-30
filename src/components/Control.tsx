@@ -79,8 +79,10 @@ export function Control({
           </i>
         </div>
         <p
-          className={`${errorStatus && 'mt-2 !max-h-48'} mt-0 max-h-0
-                        overflow-hidden text-red-400 transition-all duration-300`}
+          className={`${
+            errorStatus && 'mt-2 !max-h-48'
+          } mt-0 max-h-0 overflow-hidden text-center 
+           text-red-400 transition-all duration-300`}
         >
           {errorMessage}
         </p>
