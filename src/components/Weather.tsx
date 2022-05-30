@@ -22,7 +22,7 @@ export function Weather({
       <div className='flex items-center gap-4'>
         <img
           className='-m-5 h-20 w-20 sm:h-auto sm:w-auto'
-          src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+          src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
           alt={description}
         />
         <div className='flex w-full gap-2 sm:w-auto'>

@@ -16,7 +16,7 @@ export function HourlyForecast({
       <p className='text-[17px] text-black'>{time}</p>
       <img
         className='-m-2 mb-0 h-14 w-14'
-        src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+        src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
         alt={description}
       />
       <p className='text-xs text-black'>{temp}°</p>
